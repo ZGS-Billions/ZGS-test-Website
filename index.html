@@ -502,9 +502,12 @@
     .founder-photo {
       width: 280px; height: 340px;
       object-fit: cover;
+      object-position: center top;
       border-radius: 20px;
       display: block;
       position: relative; z-index: 1;
+      image-rendering: -webkit-optimize-contrast;
+      filter: contrast(1.08) brightness(1.04) saturate(1.06);
     }
     .f-badge {
       display: inline-flex; align-items: center; gap: 9px;
@@ -622,6 +625,111 @@
     .cohort-notice p { font-size: 14px; color: rgba(255,255,255,0.68); line-height: 1.55; }
     .cohort-notice p strong { color: #fff; }
 
+    /* LAYER GRID — color-coded system diagram */
+    .layer-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .layer-block {
+      background: rgba(255,255,255,0.025);
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.07);
+      overflow: hidden;
+    }
+    .layer-header {
+      padding: 14px 18px 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .layer-num {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      border-radius: 6px;
+      padding: 2px 8px;
+      background: rgba(255,255,255,0.06);
+    }
+    .layer-name {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .layer-nodes {
+      padding: 14px 18px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+    .lnode {
+      font-size: 13px;
+      color: rgba(255,255,255,0.75);
+      padding: 7px 12px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 7px;
+      border-left: 3px solid transparent;
+    }
+
+    /* COHORT VALUE CARDS */
+    .cohort-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 44px;
+    }
+    .cohort-card {
+      background: #12121A;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 16px;
+      padding: 32px 28px;
+      position: relative;
+      overflow: hidden;
+    }
+    .cohort-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #2E81FF, transparent);
+    }
+    .cohort-card.featured { border-color: rgba(46,129,255,0.3); }
+    .cohort-card.featured::before { background: linear-gradient(90deg, transparent, #2E81FF 40%, #7B61FF, transparent); }
+    .cohort-card-header {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: #fff;
+    }
+    .cohort-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .cohort-list li {
+      font-size: 14px;
+      color: rgba(255,255,255,0.65);
+      padding-left: 20px;
+      position: relative;
+      line-height: 1.5;
+    }
+    .cohort-list li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 8px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #2E81FF;
+    }
+    .cohort-card.featured .cohort-list li::before { background: #7B61FF; }
+
     /* FOOTER */
     footer { border-top: 1px solid rgba(255,255,255,0.06); padding: 44px 28px; text-align: center; }
     .footer-logo { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 16px; }
@@ -665,6 +773,8 @@
       .stat-item:nth-child(odd) { border-right: 1px solid rgba(255,255,255,0.06); }
       .stat-item:last-child, .stat-item:nth-last-child(2):nth-child(odd) { border-bottom: none; }
       .pricing-grid { grid-template-columns: 1fr; }
+      .cohort-grid { grid-template-columns: 1fr; }
+      .layer-grid { grid-template-columns: 1fr 1fr; }
       .proof-stats { grid-template-columns: 1fr; }
       .d-layer-label { display: none; }
       .d-connector { display: none; }
@@ -681,6 +791,7 @@
       .infra-grid { grid-template-columns: 1fr; }
       .system-diagram { padding: 28px 20px; }
       .node { font-size: 12px; padding: 6px 10px; }
+      .layer-grid { grid-template-columns: 1fr; }
       .proof-stats { grid-template-columns: 1fr 1fr; }
     }
   </style>
@@ -694,7 +805,7 @@
       <img src="Brand_assets/Zen - 3.png" alt="Zen Growth Systems logo">
       <span class="logo-text">Zen Growth Systems</span>
     </a>
-    <a class="btn" href="#audit">Book Your Pipeline Audit &nbsp;→</a>
+    <a class="btn" href="#audit">Book Your Free Demo &nbsp;→</a>
   </div>
 </nav>
 
@@ -710,30 +821,20 @@
           <span>Founding Cohort Open — 10 Agencies. Limited Spots.</span>
         </div>
         <h1 class="hero-headline fu d1">
-          The AI Appointment Setting<br>
-          Infrastructure Built for<br>
-          <span class="blue">Insurance Agencies.</span>
+          Apply for Your Free Demo and<br>
+          <span class="blue">Book 4–5 Appointments<br>in 7 Days or Less.</span>
         </h1>
         <p class="hero-sub fu d2">
-          Voice AI setters that call every new lead in 60 seconds. Reactivation agents that work your dead pipeline. A full lifecycle system from first contact to annual review. The complete stack — built, deployed, and managed for your agency.
+          On this call, we run a live pipeline audit of your agency — mapping every gap where appointments are falling through. Then we fire up the AI reactivation agent against your actual dead leads, live, so you can watch it work in real time. You'll leave with a clear picture of what the full infrastructure build looks like for your specific agency and exactly how many appointments are sitting untouched in your pipeline right now.
         </p>
-        <a class="btn lg fu d3" href="#audit">Book Your Free Pipeline Audit &nbsp;→</a>
-        <p class="hero-meta fu d3">We run a live demo against your real leads on the call. No pitch decks. No obligation.</p>
-        <div class="social-proof fu d4">
-          <div class="avatars">
-            <div class="av">JR</div>
-            <div class="av">MK</div>
-            <div class="av">TP</div>
-            <div class="av">+</div>
-          </div>
-          <p class="proof-copy"><strong>Insurance agency owners</strong> already running this infrastructure</p>
-        </div>
+        <a class="btn lg fu d3" href="#audit">Book Your Free Demo &nbsp;→</a>
+        <p class="hero-meta fu d3">Live demo on your real leads. No pitch decks. No obligation. Founding cohort — 10 spots.</p>
       </div>
 
       <div id="audit" class="fu d2">
         <div class="optin-card">
-          <h3>Book Your Free Pipeline Audit</h3>
-          <p class="card-sub">We map your gaps, run a live reactivation demo on your actual leads, and walk through exactly what a full build looks like for your agency.</p>
+          <h3>Book Your Free Demo</h3>
+          <p class="card-sub">We audit your pipeline, run the AI reactivation agent live on your dead leads, and show you exactly where your next 4–5 appointments are hiding.</p>
           <div class="card-features">
             <div class="cf">
               <div class="cf-check">
@@ -778,7 +879,7 @@
                 <option>50+ agents</option>
               </select>
             </div>
-            <button type="submit" class="btn full">Book My Free Pipeline Audit &nbsp;→</button>
+            <button type="submit" class="btn full">Book My Free Demo &nbsp;→</button>
           </form>
           <div class="success-msg" id="hero-success">
             <div class="s-icon">
@@ -806,18 +907,18 @@
       </div>
       <div class="stat-item fu d1">
         <div class="stat-num">600<span>%</span></div>
-        <div class="stat-label">ROI in first month —<br>BIG Pickering Insurance</div>
-        <div class="stat-source">Verified case study</div>
+        <div class="stat-label">ROI in first month — BIG Pickering Insurance deploying AI appointment setting</div>
+        <div class="stat-source">External agency — not a ZGS client</div>
       </div>
       <div class="stat-item fu d2">
         <div class="stat-num">58<span>+</span></div>
         <div class="stat-label">hours/month saved per agency<br>on follow-up automation</div>
-        <div class="stat-source">Voice + SMS automation</div>
+        <div class="stat-source">Industry-wide automation data</div>
       </div>
       <div class="stat-item fu d3">
         <div class="stat-num">8<span>×</span></div>
-        <div class="stat-label">ROI in 30 days —<br>O'Connor Insurance</div>
-        <div class="stat-source">Verified case study</div>
+        <div class="stat-label">ROI in 30 days — O'Connor Insurance deploying AI appointment setting</div>
+        <div class="stat-source">External agency — not a ZGS client</div>
       </div>
     </div>
   </div>
@@ -863,63 +964,88 @@
 
     <div class="system-diagram fu d3">
       <div class="diagram-title">ZGS Appointment Engine — System Architecture</div>
-      <div class="diagram-layers">
-        <div class="d-layer">
-          <div class="d-layer-label">New Lead</div>
-          <div class="d-connector"></div>
-          <div class="d-nodes">
-            <div class="node on">AI Voice Setter — 60s Speed to Lead</div>
-            <div class="node on">SMS Backup Agent</div>
-            <div class="node on">Double-Dial Logic</div>
+      <div class="layer-grid">
+
+        <!-- Layer 1: New Lead -->
+        <div class="layer-block" style="border-top:3px solid #2E81FF;">
+          <div class="layer-header">
+            <span class="layer-num" style="color:#2E81FF;">01</span>
+            <span class="layer-name" style="color:#2E81FF;">New Lead Response</span>
+          </div>
+          <div class="layer-nodes">
+            <div class="lnode" style="border-left-color:#2E81FF;">AI Voice Setter — 60s Speed to Lead</div>
+            <div class="lnode" style="border-left-color:#2E81FF;">SMS Backup Agent</div>
+            <div class="lnode" style="border-left-color:#2E81FF;">Double-Dial Logic</div>
           </div>
         </div>
-        <div class="d-layer">
-          <div class="d-layer-label">Booking</div>
-          <div class="d-connector"></div>
-          <div class="d-nodes">
-            <div class="node on">Calendar Booking Control</div>
-            <div class="node on">Dupe Prevention</div>
-            <div class="node on">Buffer Management</div>
-            <div class="node on">Confirmation Sequences</div>
+
+        <!-- Layer 2: Booking -->
+        <div class="layer-block" style="border-top:3px solid #7B61FF;">
+          <div class="layer-header">
+            <span class="layer-num" style="color:#7B61FF;">02</span>
+            <span class="layer-name" style="color:#7B61FF;">Calendar Booking</span>
+          </div>
+          <div class="layer-nodes">
+            <div class="lnode" style="border-left-color:#7B61FF;">Calendar Booking Control</div>
+            <div class="lnode" style="border-left-color:#7B61FF;">Dupe Prevention</div>
+            <div class="lnode" style="border-left-color:#7B61FF;">Buffer Management</div>
+            <div class="lnode" style="border-left-color:#7B61FF;">Confirmation Sequences</div>
           </div>
         </div>
-        <div class="d-layer">
-          <div class="d-layer-label">No-Show Recovery</div>
-          <div class="d-connector"></div>
-          <div class="d-nodes">
-            <div class="node on">No-Show Auto-Detection</div>
-            <div class="node on">AI Re-Engagement</div>
-            <div class="node on">Missed Call Text-Back</div>
+
+        <!-- Layer 3: No-Show Recovery -->
+        <div class="layer-block" style="border-top:3px solid #FF8C42;">
+          <div class="layer-header">
+            <span class="layer-num" style="color:#FF8C42;">03</span>
+            <span class="layer-name" style="color:#FF8C42;">No-Show Recovery</span>
+          </div>
+          <div class="layer-nodes">
+            <div class="lnode" style="border-left-color:#FF8C42;">No-Show Auto-Detection</div>
+            <div class="lnode" style="border-left-color:#FF8C42;">AI Re-Engagement</div>
+            <div class="lnode" style="border-left-color:#FF8C42;">Missed Call Text-Back</div>
           </div>
         </div>
-        <div class="d-layer">
-          <div class="d-layer-label">Dead Pipeline</div>
-          <div class="d-connector"></div>
-          <div class="d-nodes">
-            <div class="node on">AI Lead Reactivation Agent</div>
-            <div class="node on">Cold Nurture Sequences</div>
-            <div class="node on">Re-Qualification Logic</div>
+
+        <!-- Layer 4: Dead Pipeline -->
+        <div class="layer-block" style="border-top:3px solid #FF4757;">
+          <div class="layer-header">
+            <span class="layer-num" style="color:#FF4757;">04</span>
+            <span class="layer-name" style="color:#FF4757;">Dead Pipeline Reactivation</span>
+          </div>
+          <div class="layer-nodes">
+            <div class="lnode" style="border-left-color:#FF4757;">AI Lead Reactivation Agent</div>
+            <div class="lnode" style="border-left-color:#FF4757;">Cold Nurture Sequences</div>
+            <div class="lnode" style="border-left-color:#FF4757;">Re-Qualification Logic</div>
           </div>
         </div>
-        <div class="d-layer">
-          <div class="d-layer-label">Close Signal</div>
-          <div class="d-connector"></div>
-          <div class="d-nodes">
-            <div class="node on">Hot Live Transfer to Agent</div>
-            <div class="node on">Close-Signal Detection</div>
-            <div class="node">Calendar Fallback if Unavailable</div>
+
+        <!-- Layer 5: Close Signal -->
+        <div class="layer-block" style="border-top:3px solid #00C853;">
+          <div class="layer-header">
+            <span class="layer-num" style="color:#00C853;">05</span>
+            <span class="layer-name" style="color:#00C853;">Close Signal Detection</span>
+          </div>
+          <div class="layer-nodes">
+            <div class="lnode" style="border-left-color:#00C853;">Hot Live Transfer to Agent</div>
+            <div class="lnode" style="border-left-color:#00C853;">Close-Signal Detection</div>
+            <div class="lnode" style="border-left-color:#00C853;">Calendar Fallback if Unavailable</div>
           </div>
         </div>
-        <div class="d-layer">
-          <div class="d-layer-label">Post-Sale</div>
-          <div class="d-connector"></div>
-          <div class="d-nodes">
-            <div class="node on">Annual Review Agent</div>
-            <div class="node on">Cross-Sell Awareness</div>
-            <div class="node on">Retention Lifecycle</div>
-            <div class="node on">Policy Expansion</div>
+
+        <!-- Layer 6: Post-Sale -->
+        <div class="layer-block" style="border-top:3px solid #00BFA5;">
+          <div class="layer-header">
+            <span class="layer-num" style="color:#00BFA5;">06</span>
+            <span class="layer-name" style="color:#00BFA5;">Post-Sale Lifecycle</span>
+          </div>
+          <div class="layer-nodes">
+            <div class="lnode" style="border-left-color:#00BFA5;">Annual Review Agent</div>
+            <div class="lnode" style="border-left-color:#00BFA5;">Cross-Sell Awareness</div>
+            <div class="lnode" style="border-left-color:#00BFA5;">Retention Lifecycle</div>
+            <div class="lnode" style="border-left-color:#00BFA5;">Policy Expansion</div>
           </div>
         </div>
+
       </div>
     </div>
   </div>
@@ -1106,15 +1232,15 @@
           <div class="dot"></div>
           <span>Founder &amp; CEO — Zen Growth Systems</span>
         </div>
-        <div class="founder-name">We Built the Infrastructure.<br>Now We're Proving It.</div>
-        <div class="founder-title">Founder, Zen Growth Systems</div>
+        <div class="founder-name">Derrick McLaughlin</div>
+        <div class="founder-title">Founder &amp; CEO, Zen Growth Systems</div>
         <p class="founder-bio">
           The ZGS Appointment Engine was built because insurance agencies are bleeding revenue at every stage of their pipeline — and most of them don't know it. New leads go cold in minutes. Dead leads stay dead. Appointments no-show. Clients renew without a check-in. Every one of those is an automation problem with a real fix.
         </p>
         <p class="founder-bio">
-          We've built the full infrastructure: voice AI setters, SMS backup, intelligent booking, lead reactivation, hot live transfer, and a complete post-sale lifecycle system. Now we're placing our first founding cohort — agencies who want the full build at the founding rate, before case studies drive the price up. You see it work live on the call. Then you decide.
+          I built the full infrastructure: voice AI setters, SMS backup, intelligent booking, lead reactivation, hot live transfer, and a complete post-sale lifecycle system. Now I'm placing our first founding cohort — agencies who want the full build at the founding rate, before case studies drive the price up. You see it work live on the call. Then you decide.
         </p>
-        <p class="founder-sig">— Founder, Zen Growth Systems</p>
+        <p class="founder-sig">— Derrick McLaughlin, Founder, Zen Growth Systems</p>
       </div>
     </div>
   </div>
@@ -1124,26 +1250,51 @@
 <section class="mid">
   <div class="container">
     <span class="label fu">The Founding Cohort</span>
-    <h2 class="fu d1">First 10 Agencies. Founder's Rate.<br>Price Increases With Case Studies.</h2>
+    <h2 class="fu d1">First 10 Agencies. Full Build.<br>Everything Included.</h2>
     <p style="color:rgba(255,255,255,0.55);font-size:18px;max-width:640px;margin-top:20px;line-height:1.72;" class="fu d2">
-      The infrastructure is built and running. We're placing our first cohort in exchange for documented results. You get the full system at the founding rate — locked in before public proof drives the price up.
+      We're placing our first 10 agencies in exchange for documented results. You get the complete infrastructure built, deployed, and actively managed — at the founding rate, before case studies drive the price up.
     </p>
-    <div class="pricing-grid">
-      <div class="price-card fu d1">
-        <div class="price-label">Full Buildout</div>
-        <div class="price-num">$6,500<sub>+</sub></div>
-        <p>One-time setup. The full infrastructure deployed and configured for your agency. Founding rate — locked at signup before case studies are published.</p>
+    <div class="cohort-grid">
+
+      <div class="cohort-card fu d1">
+        <div class="cohort-card-header">🏗️ Full Infrastructure Build</div>
+        <ul class="cohort-list">
+          <li>AI Voice Setter Team — 4 agents fully configured for your agency</li>
+          <li>Speed-to-lead system — calls every new lead within 60 seconds</li>
+          <li>Double-dial + SMS backup agent — zero leads slip through</li>
+          <li>Intelligent calendar booking with dupe prevention &amp; buffer management</li>
+          <li>No-show auto-detection &amp; AI re-engagement system</li>
+          <li>Lead reactivation agent built against your dead pipeline</li>
+          <li>Hot live transfer with close-signal detection</li>
+          <li>Post-sale lifecycle: annual review, cross-sell &amp; retention sequences</li>
+        </ul>
       </div>
-      <div class="price-card featured fu d2">
-        <div class="price-label">Monthly Retainer</div>
-        <div class="price-num">$997<sub>/mo</sub></div>
-        <p>Ongoing optimization, system evolution, and active performance management. Not a support fee — your infrastructure keeps improving every month.</p>
+
+      <div class="cohort-card fu d2">
+        <div class="cohort-card-header">⚙️ Ongoing Management &amp; Access</div>
+        <ul class="cohort-list">
+          <li>Full system management — we own the backend, you never touch it</li>
+          <li>Monthly performance review &amp; optimization</li>
+          <li>GoHighLevel CRM fully configured for your pipeline</li>
+          <li>n8n workflow orchestration — built and maintained for you</li>
+          <li>Read-only client portal with live pipeline data</li>
+          <li>All integrations, updates, and system maintenance included</li>
+          <li>Direct communication channel with the build team</li>
+        </ul>
       </div>
-      <div class="price-card fu d3">
-        <div class="price-label">Founding Cohort</div>
-        <div class="price-num">10<sub style="font-size:16px;"> spots</sub></div>
-        <p>Once the 10 founding agencies are placed and results documented, the setup rate increases. Come in now and lock in the founder's price permanently.</p>
+
+      <div class="cohort-card featured fu d3">
+        <div class="cohort-card-header">🔒 Founding Member Perks</div>
+        <ul class="cohort-list">
+          <li>Founding rate — locked in permanently at signup</li>
+          <li>Rate does not increase after case studies are published</li>
+          <li>Direct founder access for your first 90 days</li>
+          <li>First priority for new system layers and feature releases</li>
+          <li>Your results documented &amp; used as the proof that drives our growth</li>
+          <li>10 spots total — no exceptions, no waitlist after close</li>
+        </ul>
       </div>
+
     </div>
   </div>
 </section>
@@ -1215,8 +1366,8 @@
   <div class="container">
     <div class="cta-center">
       <span class="label fu">Founding Cohort — 10 Agencies</span>
-      <h2 class="fu d1">See the System Work Against Your Leads.<br>Before You Spend a Dollar.</h2>
-      <p class="fu d2">Book your free pipeline audit. We run the demo live on the call. If the infrastructure is right for your agency, we close that day. If not, the demo keeps working — and we follow up when it delivers.</p>
+      <h2 class="fu d1">Apply for Your Free Demo.<br>Book 4–5 Appointments in 7 Days or Less.</h2>
+      <p class="fu d2">We audit your pipeline live, run the AI reactivation agent on your dead leads, and show you exactly where your next appointments are hiding — before you spend a dollar. If it makes sense, we build. If not, you still walk away with a free audit and a demo that keeps running.</p>
 
       <div class="final-card fu d3">
         <div class="cohort-notice">
@@ -1247,7 +1398,7 @@
               <option>50+ agents</option>
             </select>
           </div>
-          <button type="submit" class="btn full">Book My Free Pipeline Audit &nbsp;→</button>
+          <button type="submit" class="btn full">Book My Free Demo &nbsp;→</button>
         </form>
         <div class="success-msg" id="final-success">
           <div class="s-icon">
