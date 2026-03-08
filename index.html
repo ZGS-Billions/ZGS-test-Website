@@ -1,0 +1,1406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The ZGS Appointment Engine — AI Infrastructure for Insurance Agencies | Zen Growth Systems</title>
+  <meta name="description" content="Full-stack AI appointment setting infrastructure for insurance agents. Voice AI setters, SMS backup, lifecycle automation, and calendar booking — running 24/7 for your agency.">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: #050507;
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 17px;
+      font-weight: 400;
+      line-height: 1.65;
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3, h4 { font-family: 'Montserrat', sans-serif; line-height: 1.15; }
+    h1 { font-size: clamp(38px, 5.5vw, 68px); font-weight: 800; }
+    h2 { font-size: clamp(28px, 4vw, 46px); font-weight: 700; }
+    h3 { font-size: 20px; font-weight: 700; }
+
+    .label {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: #2E81FF;
+      display: block;
+      margin-bottom: 18px;
+    }
+
+    .container { max-width: 1080px; margin: 0 auto; padding: 0 28px; }
+    section { padding: 90px 0; }
+    section.dark  { background: #050507; }
+    section.mid   { background: #0D0D12; }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      inset: 0 0 auto 0;
+      z-index: 200;
+      background: rgba(5,5,7,0.88);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .nav-inner {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 18px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo-link { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+    .logo-link img { height: 38px; width: auto; }
+    .logo-text {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.01em;
+    }
+
+    /* BUTTONS */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #2E81FF;
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 500;
+      border: none;
+      border-radius: 10px;
+      padding: 14px 28px;
+      cursor: pointer;
+      box-shadow: 0 0 40px rgba(46,129,255,0.38);
+      transition: transform 0.22s ease, box-shadow 0.22s ease;
+      text-decoration: none;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 0 60px rgba(46,129,255,0.55); }
+    .btn.lg { font-size: 17px; padding: 18px 40px; }
+    .btn.full { width: 100%; justify-content: center; padding: 18px 32px; font-size: 17px; }
+
+    /* PULSE DOT */
+    .dot {
+      width: 8px; height: 8px; min-width: 8px;
+      border-radius: 50%;
+      background: #2E81FF;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    .dot.green { background: #00C853; }
+    @keyframes pulse {
+      0%,100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(0.75); opacity: 0.45; }
+    }
+
+    /* BADGE */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      background: rgba(46,129,255,0.1);
+      border: 1px solid rgba(46,129,255,0.28);
+      border-radius: 100px;
+      padding: 6px 16px;
+      margin-bottom: 26px;
+    }
+    .badge span { font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; color: #2E81FF; }
+
+    /* HERO */
+    #hero {
+      padding-top: 148px;
+      padding-bottom: 108px;
+      position: relative;
+      overflow: hidden;
+    }
+    #hero-shader {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      pointer-events: none;
+      opacity: 0.72;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 460px;
+      gap: 56px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+    .hero-headline { margin-bottom: 22px; }
+    .blue { color: #2E81FF; }
+    .hero-sub { font-size: 18px; color: rgba(255,255,255,0.62); margin-bottom: 36px; max-width: 540px; }
+    .hero-meta { font-size: 14px; color: rgba(255,255,255,0.38); margin-top: 12px; }
+    .social-proof { display: flex; align-items: center; gap: 14px; margin-top: 28px; }
+    .avatars { display: flex; }
+    .av {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      border: 2px solid #050507;
+      background: #12121A;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700;
+      color: #2E81FF;
+      font-family: 'Montserrat', sans-serif;
+      margin-left: -10px;
+    }
+    .av:first-child { margin-left: 0; }
+    .proof-copy { font-size: 14px; color: rgba(255,255,255,0.5); }
+    .proof-copy strong { color: #fff; }
+
+    /* OPT-IN CARD */
+    .optin-card {
+      background: #0D0D12;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 20px;
+      padding: 40px 36px;
+      position: relative;
+      overflow: hidden;
+    }
+    .optin-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #2E81FF, transparent);
+    }
+    .optin-card h3 { font-size: 22px; margin-bottom: 8px; }
+    .optin-card .card-sub { font-size: 15px; color: rgba(255,255,255,0.5); margin-bottom: 20px; }
+
+    .card-features { display: flex; flex-direction: column; gap: 9px; margin-bottom: 26px; }
+    .cf {
+      display: flex; align-items: flex-start; gap: 10px;
+      font-size: 14px; color: rgba(255,255,255,0.72);
+    }
+    .cf-check {
+      width: 18px; height: 18px; min-width: 18px;
+      background: rgba(46,129,255,0.15);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin-top: 1px;
+    }
+
+    /* FORM */
+    .fg { margin-bottom: 16px; }
+    .fg label {
+      display: block;
+      font-size: 13px; font-weight: 500;
+      color: rgba(255,255,255,0.68);
+      margin-bottom: 7px;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .fg input, .fg select {
+      width: 100%;
+      background: #0a0a10;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      padding: 13px 16px;
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+    .fg input::placeholder { color: rgba(255,255,255,0.28); }
+    .fg input:focus, .fg select:focus { border-color: rgba(46,129,255,0.55); }
+    .fg select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.4)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      cursor: pointer;
+    }
+    .fg select option { background: #0D0D12; }
+    .disclaimer { font-size: 12px; color: rgba(255,255,255,0.3); text-align: center; margin-top: 13px; line-height: 1.55; }
+
+    /* STATS BAR */
+    .stats-section {
+      background: #0D0D12;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      padding: 0;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+    }
+    .stat-item {
+      padding: 44px 28px;
+      text-align: center;
+      border-right: 1px solid rgba(255,255,255,0.06);
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-num {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 46px; font-weight: 800;
+      color: #fff; line-height: 1;
+      margin-bottom: 10px;
+      letter-spacing: -0.02em;
+    }
+    .stat-num span { color: #2E81FF; }
+    .stat-label { font-size: 14px; color: rgba(255,255,255,0.45); line-height: 1.5; }
+    .stat-source { font-size: 11px; color: rgba(255,255,255,0.2); margin-top: 6px; }
+
+    /* INFRASTRUCTURE CARDS */
+    .infra-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 52px;
+    }
+    .icard {
+      background: #12121A;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 16px;
+      padding: 34px 30px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+    .icard::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 15%; right: 15%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #2E81FF, transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .icard:hover { transform: translateY(-4px); border-color: rgba(46,129,255,0.33); }
+    .icard:hover::after { opacity: 1; }
+    .icard.featured {
+      border-color: rgba(46,129,255,0.22);
+      background: linear-gradient(145deg, #12121A 0%, #0d1520 100%);
+    }
+    .icard.featured::after { opacity: 0.5; }
+    .ci {
+      width: 50px; height: 50px;
+      background: rgba(46,129,255,0.1);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px;
+      margin-bottom: 22px;
+    }
+    .icard h3 { margin-bottom: 11px; font-size: 18px; }
+    .icard p { font-size: 15px; color: rgba(255,255,255,0.55); line-height: 1.65; }
+    .card-tag {
+      display: inline-block;
+      background: rgba(46,129,255,0.1);
+      border: 1px solid rgba(46,129,255,0.2);
+      border-radius: 100px;
+      padding: 3px 12px;
+      font-size: 11px; font-weight: 600;
+      color: #2E81FF;
+      font-family: 'Montserrat', sans-serif;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-top: 18px;
+    }
+
+    /* SYSTEM DIAGRAM */
+    .system-diagram {
+      background: #0D0D12;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 20px;
+      padding: 48px 44px;
+      margin-top: 52px;
+      position: relative;
+      overflow: hidden;
+    }
+    .system-diagram::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #2E81FF 30%, #2E81FF 70%, transparent);
+    }
+    .diagram-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 11px; font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: rgba(255,255,255,0.28);
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .diagram-layers { display: flex; flex-direction: column; gap: 14px; }
+    .d-layer { display: flex; align-items: center; gap: 16px; }
+    .d-layer-label {
+      width: 150px; min-width: 150px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 10px; font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.28);
+      text-align: right;
+    }
+    .d-connector { width: 24px; height: 1px; background: rgba(46,129,255,0.3); flex-shrink: 0; }
+    .d-nodes { display: flex; gap: 8px; flex-wrap: wrap; flex: 1; }
+    .node {
+      background: rgba(46,129,255,0.07);
+      border: 1px solid rgba(46,129,255,0.18);
+      border-radius: 8px;
+      padding: 7px 14px;
+      font-size: 13px; font-weight: 500;
+      color: rgba(255,255,255,0.65);
+      white-space: nowrap;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .node.on {
+      background: rgba(46,129,255,0.14);
+      border-color: rgba(46,129,255,0.38);
+      color: #fff;
+    }
+
+    /* CALL STEPS */
+    .call-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 52px;
+    }
+    .call-step {
+      background: #12121A;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 16px;
+      padding: 36px 30px;
+      position: relative;
+    }
+    .call-step::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 15%; right: 15%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #2E81FF, transparent);
+    }
+    .step-n {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 12px; font-weight: 700;
+      color: #2E81FF;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .call-step h3 { font-size: 20px; margin-bottom: 12px; }
+    .call-step p { font-size: 15px; color: rgba(255,255,255,0.55); line-height: 1.7; }
+    .live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(0,200,83,0.1);
+      border: 1px solid rgba(0,200,83,0.22);
+      border-radius: 100px;
+      padding: 4px 12px;
+      font-size: 12px; font-weight: 500;
+      color: #00C853;
+      margin-top: 18px;
+    }
+
+    /* PROOF */
+    .proof-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-top: 52px;
+    }
+    .proof-card {
+      background: #12121A;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 16px;
+      padding: 36px 32px;
+      position: relative;
+      overflow: hidden;
+    }
+    .proof-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #2E81FF, transparent);
+    }
+    .proof-num {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 56px; font-weight: 800;
+      color: #fff; line-height: 1;
+      margin-bottom: 8px;
+      letter-spacing: -0.02em;
+    }
+    .proof-num span { color: #2E81FF; }
+    .proof-card h4 { font-family: 'Montserrat', sans-serif; font-size: 18px; font-weight: 700; margin-bottom: 10px; }
+    .proof-card p { font-size: 15px; color: rgba(255,255,255,0.52); line-height: 1.65; }
+    .proof-source { font-size: 12px; color: rgba(255,255,255,0.28); margin-top: 14px; font-style: italic; }
+
+    .proof-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 20px; }
+    .ps {
+      background: #12121A;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 14px;
+      padding: 28px 22px;
+      text-align: center;
+    }
+    .ps-n {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 36px; font-weight: 800;
+      color: #fff; line-height: 1;
+      margin-bottom: 8px;
+    }
+    .ps-n span { color: #2E81FF; }
+    .ps p { font-size: 13px; color: rgba(255,255,255,0.42); line-height: 1.5; }
+
+    /* FOR GRID */
+    .for-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 48px;
+    }
+    .for-item {
+      display: flex; align-items: flex-start; gap: 14px;
+      padding: 22px 24px;
+      background: #12121A;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 12px;
+      transition: border-color 0.2s ease;
+    }
+    .for-item:hover { border-color: rgba(46,129,255,0.2); }
+    .check {
+      width: 28px; height: 28px; min-width: 28px;
+      background: rgba(46,129,255,0.12);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin-top: 1px;
+    }
+    .for-item p { font-size: 15px; color: rgba(255,255,255,0.78); line-height: 1.55; }
+
+    /* FOUNDER */
+    .founder-grid {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 64px;
+      align-items: center;
+    }
+    .img-wrap { position: relative; }
+    .img-wrap-glow {
+      position: absolute; inset: -24px;
+      background: radial-gradient(ellipse at center, rgba(46,129,255,0.18), transparent 70%);
+      border-radius: 30px; z-index: 0;
+    }
+    .founder-photo {
+      width: 280px; height: 340px;
+      object-fit: cover;
+      border-radius: 20px;
+      display: block;
+      position: relative; z-index: 1;
+    }
+    .f-badge {
+      display: inline-flex; align-items: center; gap: 9px;
+      background: rgba(46,129,255,0.08);
+      border: 1px solid rgba(46,129,255,0.22);
+      border-radius: 100px;
+      padding: 5px 14px;
+      margin-bottom: 18px;
+    }
+    .f-badge span { font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.65); }
+    .founder-name { font-family: 'Montserrat', sans-serif; font-size: 28px; font-weight: 800; margin-bottom: 8px; }
+    .founder-title { color: #2E81FF; font-size: 15px; font-weight: 500; margin-bottom: 24px; }
+    .founder-bio { color: rgba(255,255,255,0.62); line-height: 1.72; margin-bottom: 18px; }
+    .founder-sig { color: rgba(255,255,255,0.35); font-size: 14px; font-style: italic; }
+
+    /* PRICING GRID */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 44px;
+    }
+    .price-card {
+      background: #12121A;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 16px;
+      padding: 32px 28px;
+    }
+    .price-card.featured { border-color: rgba(46,129,255,0.3); }
+    .price-label {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 11px; font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #2E81FF;
+      margin-bottom: 16px;
+    }
+    .price-num {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 38px; font-weight: 800;
+      color: #fff; line-height: 1;
+      margin-bottom: 6px;
+    }
+    .price-num sub { font-size: 18px; font-weight: 500; color: rgba(255,255,255,0.5); vertical-align: baseline; }
+    .price-card p { font-size: 14px; color: rgba(255,255,255,0.45); line-height: 1.6; margin-top: 12px; }
+
+    /* FAQ */
+    .faq-list { margin-top: 52px; display: flex; flex-direction: column; gap: 10px; }
+    .faq-item {
+      background: #12121A;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: border-color 0.2s ease;
+    }
+    .faq-item.open { border-color: rgba(46,129,255,0.3); }
+    .faq-q {
+      width: 100%; background: none; border: none; color: #fff;
+      font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 16px;
+      text-align: left;
+      padding: 24px 28px;
+      cursor: pointer;
+      display: flex; justify-content: space-between; align-items: center; gap: 18px;
+      transition: color 0.2s;
+    }
+    .faq-item.open .faq-q { color: #2E81FF; }
+    .faq-icon {
+      min-width: 26px; width: 26px; height: 26px;
+      border-radius: 50%;
+      background: rgba(46,129,255,0.12);
+      display: flex; align-items: center; justify-content: center;
+      color: #2E81FF;
+      transition: transform 0.3s ease;
+    }
+    .faq-item.open .faq-icon { transform: rotate(45deg); }
+    .faq-body { max-height: 0; overflow: hidden; transition: max-height 0.38s ease; }
+    .faq-body-inner { padding: 0 28px 26px; color: rgba(255,255,255,0.58); font-size: 16px; line-height: 1.72; }
+
+    /* FINAL CTA */
+    #final-cta { position: relative; overflow: hidden; }
+    .cta-glow {
+      position: absolute; inset: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 90% 70% at 50% 50%, rgba(46,129,255,0.13) 0%, transparent 65%),
+        linear-gradient(rgba(46,129,255,0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(46,129,255,0.035) 1px, transparent 1px);
+      background-size: auto, 60px 60px, 60px 60px;
+    }
+    .cta-center { text-align: center; max-width: 680px; margin: 0 auto; position: relative; z-index: 1; }
+    .cta-center h2 { margin-bottom: 20px; }
+    .cta-center > p { font-size: 18px; color: rgba(255,255,255,0.58); margin-bottom: 44px; line-height: 1.65; }
+    .final-card {
+      background: #0D0D12;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 20px;
+      padding: 42px 40px;
+      max-width: 520px;
+      margin: 0 auto;
+      position: relative; overflow: hidden;
+    }
+    .final-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, #2E81FF, transparent);
+    }
+    .cohort-notice {
+      display: flex; align-items: flex-start; gap: 14px;
+      background: rgba(46,129,255,0.07);
+      border: 1px solid rgba(46,129,255,0.2);
+      border-radius: 10px;
+      padding: 16px 18px;
+      margin-bottom: 26px;
+    }
+    .cohort-icon { font-size: 20px; line-height: 1; margin-top: 1px; }
+    .cohort-notice p { font-size: 14px; color: rgba(255,255,255,0.68); line-height: 1.55; }
+    .cohort-notice p strong { color: #fff; }
+
+    /* FOOTER */
+    footer { border-top: 1px solid rgba(255,255,255,0.06); padding: 44px 28px; text-align: center; }
+    .footer-logo { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 16px; }
+    .footer-logo img { height: 30px; }
+    .footer-logo span { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 14px; }
+    footer p { font-size: 13px; color: rgba(255,255,255,0.28); margin-top: 6px; }
+
+    /* SUCCESS STATE */
+    .success-msg { display: none; text-align: center; padding: 24px 0 8px; }
+    .success-msg .s-icon {
+      width: 56px; height: 56px;
+      background: rgba(46,129,255,0.15);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 18px;
+    }
+    .success-msg h3 { color: #2E81FF; margin-bottom: 10px; }
+    .success-msg p { color: rgba(255,255,255,0.55); font-size: 15px; }
+
+    /* ANIMATIONS */
+    .fu { opacity: 0; transform: translateY(26px); transition: opacity 0.72s ease, transform 0.72s ease; }
+    .fu.vis { opacity: 1; transform: translateY(0); }
+    .fu.d1 { transition-delay: 0.08s; }
+    .fu.d2 { transition-delay: 0.18s; }
+    .fu.d3 { transition-delay: 0.28s; }
+    .fu.d4 { transition-delay: 0.38s; }
+    .fu.d5 { transition-delay: 0.48s; }
+
+    /* RESPONSIVE */
+    @media (max-width: 960px) {
+      .hero-grid { grid-template-columns: 1fr; gap: 50px; }
+      .infra-grid { grid-template-columns: 1fr 1fr; }
+      .call-grid { grid-template-columns: 1fr; }
+      .proof-grid { grid-template-columns: 1fr; }
+      .for-grid { grid-template-columns: 1fr; }
+      .founder-grid { grid-template-columns: 1fr; gap: 40px; text-align: center; }
+      .img-wrap { margin: 0 auto; width: fit-content; }
+      .f-badge { margin: 0 auto 18px; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .stat-item { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.06); }
+      .stat-item:nth-child(odd) { border-right: 1px solid rgba(255,255,255,0.06); }
+      .stat-item:last-child, .stat-item:nth-last-child(2):nth-child(odd) { border-bottom: none; }
+      .pricing-grid { grid-template-columns: 1fr; }
+      .proof-stats { grid-template-columns: 1fr; }
+      .d-layer-label { display: none; }
+      .d-connector { display: none; }
+    }
+    @media (max-width: 640px) {
+      section { padding: 64px 0; }
+      #hero { padding-top: 116px; padding-bottom: 72px; }
+      .optin-card { padding: 28px 22px; }
+      .final-card { padding: 28px 22px; }
+      h1 { font-size: 36px; }
+      h2 { font-size: 28px; }
+      .btn.lg { padding: 16px 28px; }
+      nav .btn { display: none; }
+      .infra-grid { grid-template-columns: 1fr; }
+      .system-diagram { padding: 28px 20px; }
+      .node { font-size: 12px; padding: 6px 10px; }
+      .proof-stats { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a class="logo-link" href="#">
+      <img src="Brand_assets/Zen - 3.png" alt="Zen Growth Systems logo">
+      <span class="logo-text">Zen Growth Systems</span>
+    </a>
+    <a class="btn" href="#audit">Book Your Pipeline Audit &nbsp;→</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero" class="dark">
+  <canvas id="hero-shader" aria-hidden="true"></canvas>
+  <div class="container">
+    <div class="hero-grid">
+
+      <div>
+        <div class="badge fu">
+          <div class="dot"></div>
+          <span>Founding Cohort Open — 10 Agencies. Limited Spots.</span>
+        </div>
+        <h1 class="hero-headline fu d1">
+          The AI Appointment Setting<br>
+          Infrastructure Built for<br>
+          <span class="blue">Insurance Agencies.</span>
+        </h1>
+        <p class="hero-sub fu d2">
+          Voice AI setters that call every new lead in 60 seconds. Reactivation agents that work your dead pipeline. A full lifecycle system from first contact to annual review. The complete stack — built, deployed, and managed for your agency.
+        </p>
+        <a class="btn lg fu d3" href="#audit">Book Your Free Pipeline Audit &nbsp;→</a>
+        <p class="hero-meta fu d3">We run a live demo against your real leads on the call. No pitch decks. No obligation.</p>
+        <div class="social-proof fu d4">
+          <div class="avatars">
+            <div class="av">JR</div>
+            <div class="av">MK</div>
+            <div class="av">TP</div>
+            <div class="av">+</div>
+          </div>
+          <p class="proof-copy"><strong>Insurance agency owners</strong> already running this infrastructure</p>
+        </div>
+      </div>
+
+      <div id="audit" class="fu d2">
+        <div class="optin-card">
+          <h3>Book Your Free Pipeline Audit</h3>
+          <p class="card-sub">We map your gaps, run a live reactivation demo on your actual leads, and walk through exactly what a full build looks like for your agency.</p>
+          <div class="card-features">
+            <div class="cf">
+              <div class="cf-check">
+                <svg width="9" height="9" fill="none" stroke="#2E81FF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              Live sales pipeline audit — no charge
+            </div>
+            <div class="cf">
+              <div class="cf-check">
+                <svg width="9" height="9" fill="none" stroke="#2E81FF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              Live reactivation demo on your actual leads
+            </div>
+            <div class="cf">
+              <div class="cf-check">
+                <svg width="9" height="9" fill="none" stroke="#2E81FF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              Full infrastructure walkthrough — built around your agency
+            </div>
+          </div>
+          <form id="hero-form" onsubmit="handleForm(event,'hero-form')">
+            <div class="fg">
+              <label for="h-name">First Name</label>
+              <input id="h-name" type="text" placeholder="Your first name" required autocomplete="given-name">
+            </div>
+            <div class="fg">
+              <label for="h-email">Email Address</label>
+              <input id="h-email" type="email" placeholder="you@agency.com" required autocomplete="email">
+            </div>
+            <div class="fg">
+              <label for="h-phone">Phone Number</label>
+              <input id="h-phone" type="tel" placeholder="(555) 000-0000" required autocomplete="tel">
+            </div>
+            <div class="fg">
+              <label for="h-size">Agency size</label>
+              <select id="h-size" required>
+                <option value="" disabled selected>Select agency size</option>
+                <option>Just me (solo agent)</option>
+                <option>2–5 agents</option>
+                <option>6–15 agents</option>
+                <option>16–50 agents</option>
+                <option>50+ agents</option>
+              </select>
+            </div>
+            <button type="submit" class="btn full">Book My Free Pipeline Audit &nbsp;→</button>
+          </form>
+          <div class="success-msg" id="hero-success">
+            <div class="s-icon">
+              <svg width="24" height="24" fill="none" stroke="#2E81FF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <h3>You're In.</h3>
+            <p>We'll reach out within 24 hours to schedule your pipeline audit and demo call. Come ready with your lead list.</p>
+          </div>
+          <p class="disclaimer">We never share your information. Founding cohort is capped at 10 agencies — once filled, this offer closes.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- STATS BAR -->
+<div class="stats-section">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-item fu">
+        <div class="stat-num">40<span>%</span></div>
+        <div class="stat-label">of inbound insurance leads<br>never receive a follow-up</div>
+        <div class="stat-source">Industry-wide data</div>
+      </div>
+      <div class="stat-item fu d1">
+        <div class="stat-num">600<span>%</span></div>
+        <div class="stat-label">ROI in first month —<br>BIG Pickering Insurance</div>
+        <div class="stat-source">Verified case study</div>
+      </div>
+      <div class="stat-item fu d2">
+        <div class="stat-num">58<span>+</span></div>
+        <div class="stat-label">hours/month saved per agency<br>on follow-up automation</div>
+        <div class="stat-source">Voice + SMS automation</div>
+      </div>
+      <div class="stat-item fu d3">
+        <div class="stat-num">8<span>×</span></div>
+        <div class="stat-label">ROI in 30 days —<br>O'Connor Insurance</div>
+        <div class="stat-source">Verified case study</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- THE PROBLEM -->
+<section class="dark">
+  <div class="container">
+    <span class="label fu">The Problem</span>
+    <h2 class="fu d1">You're Losing Appointments<br>to a Process Problem, Not a Lead Problem.</h2>
+    <p style="color:rgba(255,255,255,0.55);font-size:18px;max-width:640px;margin-top:20px;line-height:1.72;" class="fu d2">
+      New leads go cold in minutes if nobody calls. Old pipeline sits untouched. Appointments book but ghost. Clients renew without a check-in. This isn't a lead quality issue — it's an infrastructure gap. Most agencies just don't have the automation stack to run all of it.
+    </p>
+    <div class="for-grid">
+      <div class="for-item fu d1">
+        <div class="check"><svg width="13" height="13" fill="none" stroke="#2E81FF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <p>New leads go cold because the first call comes an hour late — or not at all. Speed wins deals. Slow follow-up loses them.</p>
+      </div>
+      <div class="for-item fu d2">
+        <div class="check"><svg width="13" height="13" fill="none" stroke="#2E81FF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <p>Hundreds of cold leads sit in your CRM — old quotes, ghosted contacts — unworked because there's no one and no system to work them.</p>
+      </div>
+      <div class="for-item fu d3">
+        <div class="check"><svg width="13" height="13" fill="none" stroke="#2E81FF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <p>No-shows kill your calendar. Without automated confirmation and recovery, 20–40% of booked appointments ghost and never get re-engaged.</p>
+      </div>
+      <div class="for-item fu d4">
+        <div class="check"><svg width="13" height="13" fill="none" stroke="#2E81FF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <p>The average agency client holds 1.3 policies vs. a 2.0+ benchmark. The gap is cross-sell and retention — both fully automatable, almost never automated.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THE INFRASTRUCTURE -->
+<section class="mid">
+  <div class="container">
+    <span class="label fu">The ZGS Appointment Engine</span>
+    <h2 class="fu d1">Every Layer of Your Pipeline.<br>Automated and Running 24/7.</h2>
+    <p style="color:rgba(255,255,255,0.55);font-size:18px;max-width:640px;margin-top:20px;line-height:1.72;" class="fu d2">
+      This isn't a single tool. It's a full-stack appointment setting and revenue infrastructure — six interconnected layers that handle your pipeline from first contact to annual review.
+    </p>
+
+    <div class="system-diagram fu d3">
+      <div class="diagram-title">ZGS Appointment Engine — System Architecture</div>
+      <div class="diagram-layers">
+        <div class="d-layer">
+          <div class="d-layer-label">New Lead</div>
+          <div class="d-connector"></div>
+          <div class="d-nodes">
+            <div class="node on">AI Voice Setter — 60s Speed to Lead</div>
+            <div class="node on">SMS Backup Agent</div>
+            <div class="node on">Double-Dial Logic</div>
+          </div>
+        </div>
+        <div class="d-layer">
+          <div class="d-layer-label">Booking</div>
+          <div class="d-connector"></div>
+          <div class="d-nodes">
+            <div class="node on">Calendar Booking Control</div>
+            <div class="node on">Dupe Prevention</div>
+            <div class="node on">Buffer Management</div>
+            <div class="node on">Confirmation Sequences</div>
+          </div>
+        </div>
+        <div class="d-layer">
+          <div class="d-layer-label">No-Show Recovery</div>
+          <div class="d-connector"></div>
+          <div class="d-nodes">
+            <div class="node on">No-Show Auto-Detection</div>
+            <div class="node on">AI Re-Engagement</div>
+            <div class="node on">Missed Call Text-Back</div>
+          </div>
+        </div>
+        <div class="d-layer">
+          <div class="d-layer-label">Dead Pipeline</div>
+          <div class="d-connector"></div>
+          <div class="d-nodes">
+            <div class="node on">AI Lead Reactivation Agent</div>
+            <div class="node on">Cold Nurture Sequences</div>
+            <div class="node on">Re-Qualification Logic</div>
+          </div>
+        </div>
+        <div class="d-layer">
+          <div class="d-layer-label">Close Signal</div>
+          <div class="d-connector"></div>
+          <div class="d-nodes">
+            <div class="node on">Hot Live Transfer to Agent</div>
+            <div class="node on">Close-Signal Detection</div>
+            <div class="node">Calendar Fallback if Unavailable</div>
+          </div>
+        </div>
+        <div class="d-layer">
+          <div class="d-layer-label">Post-Sale</div>
+          <div class="d-connector"></div>
+          <div class="d-nodes">
+            <div class="node on">Annual Review Agent</div>
+            <div class="node on">Cross-Sell Awareness</div>
+            <div class="node on">Retention Lifecycle</div>
+            <div class="node on">Policy Expansion</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT'S INSIDE -->
+<section class="dark">
+  <div class="container">
+    <span class="label fu">What's Inside</span>
+    <h2 class="fu d1">Six Layers. One Integrated System.</h2>
+    <div class="infra-grid">
+
+      <div class="icard featured fu d1">
+        <div class="ci">🎙️</div>
+        <h3>AI Voice Setter Team</h3>
+        <p>Four AI voice agents cover every stage: speed-to-lead, lead reactivation, no-show recovery, and post-sale outreach. Each agent knows your product, your tone, and when to hand the call to you live.</p>
+        <span class="card-tag">Core Infrastructure</span>
+      </div>
+
+      <div class="icard fu d2">
+        <div class="ci">⚡</div>
+        <h3>Speed-to-Lead + SMS Backup</h3>
+        <p>Every new lead gets a voice call within 60 seconds of submission. If no answer, double-dial triggers. SMS backup fires automatically. You stop losing deals to slow follow-up permanently.</p>
+        <span class="card-tag">New Lead Layer</span>
+      </div>
+
+      <div class="icard fu d3">
+        <div class="ci">📅</div>
+        <h3>Intelligent Calendar Booking</h3>
+        <p>Full booking control with dupe prevention, buffer management, automated confirmations, and no-show auto-detection. When someone doesn't show, the system detects it and re-engages them — without you touching anything.</p>
+        <span class="card-tag">Booking Layer</span>
+      </div>
+
+      <div class="icard fu d1">
+        <div class="ci">🔄</div>
+        <h3>Lead Reactivation Agent</h3>
+        <p>Dedicated AI agent for your cold, ghosted, and unconverted pipeline. We run it live against your leads during the audit call — so you see the system work before you spend a dollar. Old leads become new appointments.</p>
+        <span class="card-tag">Dead Pipeline Layer</span>
+      </div>
+
+      <div class="icard fu d2">
+        <div class="ci">🔥</div>
+        <h3>Hot Live Transfer</h3>
+        <p>When the AI detects close-ready signals — buying intent, urgency, direct questions — it rings your phone immediately. You pick up and speak to a qualified, warmed-up prospect. If you don't answer, they book instead. Nothing falls through.</p>
+        <span class="card-tag">Close Signal Layer</span>
+      </div>
+
+      <div class="icard fu d3">
+        <div class="ci">📊</div>
+        <h3>Post-Sale Lifecycle Automation</h3>
+        <p>Annual review reminders, cross-sell awareness sequences, and a full retention cycle — all running without you. The average agency client holds 1.3 policies. This is how you close that gap and compound revenue from existing clients.</p>
+        <span class="card-tag">Revenue Layer</span>
+      </div>
+
+    </div>
+
+    <div style="background:#0D0D12;border:1px solid rgba(46,129,255,0.18);border-radius:16px;padding:32px 36px;margin-top:24px;display:flex;align-items:center;gap:28px;" class="fu">
+      <div style="font-size:32px;flex-shrink:0;">🏗️</div>
+      <div>
+        <h3 style="font-size:18px;margin-bottom:8px;">GHL + n8n — Everything Connected</h3>
+        <p style="font-size:15px;color:rgba(255,255,255,0.52);line-height:1.65;">GoHighLevel is the operational home base. n8n handles bidirectional CRM sync and workflow orchestration across the full stack. You get a read-only client portal with live pipeline data. Every lead, call, and booking — visible and tracked in real time.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW THE CALL WORKS -->
+<section class="mid">
+  <div class="container">
+    <span class="label fu">How It Works</span>
+    <h2 class="fu d1">One Call. Live Demo. Real Results.</h2>
+    <p style="color:rgba(255,255,255,0.55);font-size:18px;max-width:580px;margin-top:20px;line-height:1.72;" class="fu d2">
+      We don't pitch. We show you. The call is a working session — here's exactly how it goes.
+    </p>
+    <div class="call-grid">
+      <div class="call-step fu d1">
+        <div class="step-n">Step 01</div>
+        <h3>Free Sales Pipeline Audit</h3>
+        <p>We review your current follow-up process, where leads are coming in, how they're being worked, and exactly where appointments are falling through. We identify every revenue leak before we touch anything.</p>
+        <div class="live-badge"><div class="dot green" style="width:6px;height:6px;min-width:6px;"></div>No charge. No obligation.</div>
+      </div>
+      <div class="call-step fu d2">
+        <div class="step-n">Step 02</div>
+        <h3>Live Reactivation Demo</h3>
+        <p>We run the AI reactivation agent against your actual dead leads — live, on the call. You watch the system work in real time against your real pipeline. This is not a simulation or a case study. This is the infrastructure running on your leads.</p>
+        <div class="live-badge"><div class="dot green" style="width:6px;height:6px;min-width:6px;"></div>Your leads. Live results.</div>
+      </div>
+      <div class="call-step fu d3">
+        <div class="step-n">Step 03</div>
+        <h3>Close or Walk Away</h3>
+        <p>If the infrastructure makes sense, we present the buildout and close on the call. If you need more time, the demo keeps running — appointments will book from your dead leads in the following days, and we follow up when they do.</p>
+        <div class="live-badge"><div class="dot green" style="width:6px;height:6px;min-width:6px;"></div>Results come either way.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROOF -->
+<section class="dark">
+  <div class="container">
+    <span class="label fu">Market Validation</span>
+    <h2 class="fu d1">The Market Has Already<br>Proven This Works.</h2>
+    <p style="color:rgba(255,255,255,0.55);font-size:17px;max-width:600px;margin-top:20px;line-height:1.72;" class="fu d2">
+      We're placing our first founding cohort in exchange for documented results. Here's what the broader insurance market is already showing — before our own case studies are in.
+    </p>
+    <div class="proof-grid">
+      <div class="proof-card fu d1">
+        <div class="proof-num">600<span>%</span></div>
+        <h4>ROI — First Month</h4>
+        <p>BIG Pickering Insurance deployed AI appointment setting and saw 600% return in their first 30 days. Call answer rate jumped from 12% to 100%.</p>
+        <p class="proof-source">BIG Pickering Insurance — verified case study</p>
+      </div>
+      <div class="proof-card fu d2">
+        <div class="proof-num">8<span>×</span></div>
+        <h4>ROI in 30 Days</h4>
+        <p>O'Connor Insurance achieved an 8× return within their first month running AI-powered appointment setting across their agent team.</p>
+        <p class="proof-source">O'Connor Insurance — verified case study</p>
+      </div>
+    </div>
+    <div class="proof-stats">
+      <div class="ps fu d1">
+        <div class="ps-n">67<span>%</span></div>
+        <p>increase in meeting conversion rate for agents using AI appointment setting</p>
+      </div>
+      <div class="ps fu d2">
+        <div class="ps-n">40<span>%</span></div>
+        <p>of inbound leads never receive follow-up — industry-wide stat</p>
+      </div>
+      <div class="ps fu d3">
+        <div class="ps-n">58<span>+</span></div>
+        <p>hours/month recovered per agency from voice and follow-up automation</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHO IT'S FOR -->
+<section class="mid">
+  <div class="container">
+    <span class="label fu">Who This Is For</span>
+    <h2 class="fu d1">Built for the Agent Who<br>Is the Sales Team.</h2>
+    <p style="color:rgba(255,255,255,0.55);font-size:18px;max-width:600px;margin-top:20px;line-height:1.72;" class="fu d2">
+      Solo agents and small agency owners who are personally responsible for production — and losing deals not because their product is wrong, but because the follow-up infrastructure can't keep up.
+    </p>
+    <div class="for-grid">
+      <div class="for-item fu d1">
+        <div class="check"><svg width="13" height="13" fill="none" stroke="#2E81FF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <p>You're running P&amp;C, life, health, or independent insurance — solo or with a small team of producers</p>
+      </div>
+      <div class="for-item fu d2">
+        <div class="check"><svg width="13" height="13" fill="none" stroke="#2E81FF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <p>New leads are coming in but follow-up is slow, inconsistent, or falling entirely on you to manage manually</p>
+      </div>
+      <div class="for-item fu d3">
+        <div class="check"><svg width="13" height="13" fill="none" stroke="#2E81FF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <p>You have a pipeline of cold leads — old quotes, ghosted contacts — that nobody is working and you can't get to</p>
+      </div>
+      <div class="for-item fu d4">
+        <div class="check"><svg width="13" height="13" fill="none" stroke="#2E81FF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <p>No-shows are costing you real time — appointments that don't show, don't get re-engaged, and just disappear</p>
+      </div>
+      <div class="for-item fu d5">
+        <div class="check"><svg width="13" height="13" fill="none" stroke="#2E81FF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <p>You want the full system built and managed — not another tool to configure, learn, or babysit yourself</p>
+      </div>
+      <div class="for-item fu">
+        <div class="check"><svg width="13" height="13" fill="none" stroke="#2E81FF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <p>You're ready to invest in infrastructure that compounds — not a quick fix or a one-time campaign</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOUNDER -->
+<section class="dark">
+  <div class="container">
+    <div class="founder-grid">
+      <div class="img-wrap fu">
+        <div class="img-wrap-glow" aria-hidden="true"></div>
+        <img src="Brand_assets/linkedin headshot.jpg" alt="Founder of Zen Growth Systems" class="founder-photo">
+      </div>
+      <div class="fu d1">
+        <div class="f-badge">
+          <div class="dot"></div>
+          <span>Founder &amp; CEO — Zen Growth Systems</span>
+        </div>
+        <div class="founder-name">We Built the Infrastructure.<br>Now We're Proving It.</div>
+        <div class="founder-title">Founder, Zen Growth Systems</div>
+        <p class="founder-bio">
+          The ZGS Appointment Engine was built because insurance agencies are bleeding revenue at every stage of their pipeline — and most of them don't know it. New leads go cold in minutes. Dead leads stay dead. Appointments no-show. Clients renew without a check-in. Every one of those is an automation problem with a real fix.
+        </p>
+        <p class="founder-bio">
+          We've built the full infrastructure: voice AI setters, SMS backup, intelligent booking, lead reactivation, hot live transfer, and a complete post-sale lifecycle system. Now we're placing our first founding cohort — agencies who want the full build at the founding rate, before case studies drive the price up. You see it work live on the call. Then you decide.
+        </p>
+        <p class="founder-sig">— Founder, Zen Growth Systems</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOUNDING COHORT -->
+<section class="mid">
+  <div class="container">
+    <span class="label fu">The Founding Cohort</span>
+    <h2 class="fu d1">First 10 Agencies. Founder's Rate.<br>Price Increases With Case Studies.</h2>
+    <p style="color:rgba(255,255,255,0.55);font-size:18px;max-width:640px;margin-top:20px;line-height:1.72;" class="fu d2">
+      The infrastructure is built and running. We're placing our first cohort in exchange for documented results. You get the full system at the founding rate — locked in before public proof drives the price up.
+    </p>
+    <div class="pricing-grid">
+      <div class="price-card fu d1">
+        <div class="price-label">Full Buildout</div>
+        <div class="price-num">$6,500<sub>+</sub></div>
+        <p>One-time setup. The full infrastructure deployed and configured for your agency. Founding rate — locked at signup before case studies are published.</p>
+      </div>
+      <div class="price-card featured fu d2">
+        <div class="price-label">Monthly Retainer</div>
+        <div class="price-num">$997<sub>/mo</sub></div>
+        <p>Ongoing optimization, system evolution, and active performance management. Not a support fee — your infrastructure keeps improving every month.</p>
+      </div>
+      <div class="price-card fu d3">
+        <div class="price-label">Founding Cohort</div>
+        <div class="price-num">10<sub style="font-size:16px;"> spots</sub></div>
+        <p>Once the 10 founding agencies are placed and results documented, the setup rate increases. Come in now and lock in the founder's price permanently.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="dark">
+  <div class="container">
+    <span class="label fu">Common Questions</span>
+    <h2 class="fu d1">Straight Answers.</h2>
+    <div class="faq-list">
+
+      <div class="faq-item fu d1">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          What exactly happens on the pipeline audit call?
+          <span class="faq-icon" aria-hidden="true"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+        </button>
+        <div class="faq-body">
+          <div class="faq-body-inner">Three parts. First: a live audit of your current follow-up process — where leads come in, how they get worked, where appointments fall through. Second: we run the AI reactivation agent live against your dead leads while you watch. Third: we walk through what the full infrastructure buildout looks like for your specific agency. If it makes sense, we close on the call. If you need more time, the demo keeps running and we follow up when your first appointments book.</div>
+        </div>
+      </div>
+
+      <div class="faq-item fu d2">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          What does "founding cohort" mean — what's the actual deal?
+          <span class="faq-icon" aria-hidden="true"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+        </button>
+        <div class="faq-body">
+          <div class="faq-body-inner">We're being direct: the infrastructure is fully built, but we're placing our first 10 client agencies in exchange for documented results. You get the full system at the founder's rate — a $6,500+ buildout versus the future market rate after case studies are published. You lock in that pricing permanently. Once the 10 founding agencies are in and results are documented, the setup price increases. You benefit from being early.</div>
+        </div>
+      </div>
+
+      <div class="faq-item fu d3">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          How does the hot live transfer actually work?
+          <span class="faq-icon" aria-hidden="true"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+        </button>
+        <div class="faq-body">
+          <div class="faq-body-inner">The AI voice agent calls leads, handles conversation, qualifies them, and books appointments. When it detects close-ready language — buying signals, urgency, specific coverage questions — it triggers a live transfer that rings your phone immediately. You pick up and step into a live conversation with a qualified, warmed-up prospect mid-call. If you don't answer, the system automatically books them onto your calendar instead. Nothing falls through the cracks.</div>
+        </div>
+      </div>
+
+      <div class="faq-item fu d4">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          What's covered in the post-sale lifecycle automation?
+          <span class="faq-icon" aria-hidden="true"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+        </button>
+        <div class="faq-body">
+          <div class="faq-body-inner">Three automated workflows run post-sale: an annual review agent that proactively schedules policy reviews, a cross-sell awareness sequence that surfaces expansion opportunities based on existing coverage, and a retention lifecycle that keeps clients engaged and reduces lapse. The average agency client holds 1.3 policies versus a 2.0+ benchmark. That gap is almost entirely a follow-up and timing problem. This closes it automatically.</div>
+        </div>
+      </div>
+
+      <div class="faq-item fu d5">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          What tech stack does this run on? Do I need to manage it?
+          <span class="faq-icon" aria-hidden="true"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+        </button>
+        <div class="faq-body">
+          <div class="faq-body-inner">GoHighLevel is the operational home base — CRM, calendar, pipeline, and automation all live there. n8n handles bidirectional sync and workflow orchestration across the full stack. You get a read-only client portal with live data. We handle all configuration, integration, and ongoing maintenance. You never touch the backend. Your job is to show up for calls and close.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section id="final-cta" class="dark">
+  <div class="cta-glow" aria-hidden="true"></div>
+  <div class="container">
+    <div class="cta-center">
+      <span class="label fu">Founding Cohort — 10 Agencies</span>
+      <h2 class="fu d1">See the System Work Against Your Leads.<br>Before You Spend a Dollar.</h2>
+      <p class="fu d2">Book your free pipeline audit. We run the demo live on the call. If the infrastructure is right for your agency, we close that day. If not, the demo keeps working — and we follow up when it delivers.</p>
+
+      <div class="final-card fu d3">
+        <div class="cohort-notice">
+          <div class="cohort-icon">🔒</div>
+          <p><strong>Founding rate locked in at signup.</strong> Setup price increases once the 10 founding case studies are documented. 10 spots total — no exceptions.</p>
+        </div>
+        <form id="final-form" onsubmit="handleForm(event,'final-form')">
+          <div class="fg">
+            <label for="f-name">First Name</label>
+            <input id="f-name" type="text" placeholder="Your first name" required autocomplete="given-name">
+          </div>
+          <div class="fg">
+            <label for="f-email">Email Address</label>
+            <input id="f-email" type="email" placeholder="you@agency.com" required autocomplete="email">
+          </div>
+          <div class="fg">
+            <label for="f-phone">Phone Number</label>
+            <input id="f-phone" type="tel" placeholder="(555) 000-0000" required autocomplete="tel">
+          </div>
+          <div class="fg">
+            <label for="f-size">Agency Size</label>
+            <select id="f-size" required>
+              <option value="" disabled selected>Select agency size</option>
+              <option>Just me (solo agent)</option>
+              <option>2–5 agents</option>
+              <option>6–15 agents</option>
+              <option>16–50 agents</option>
+              <option>50+ agents</option>
+            </select>
+          </div>
+          <button type="submit" class="btn full">Book My Free Pipeline Audit &nbsp;→</button>
+        </form>
+        <div class="success-msg" id="final-success">
+          <div class="s-icon">
+            <svg width="24" height="24" fill="none" stroke="#2E81FF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <h3>You're In.</h3>
+          <p>We'll reach out within 24 hours to schedule your pipeline audit and demo call. Come ready with your lead list.</p>
+        </div>
+        <p class="disclaimer">We never share your information. Founding cohort is capped at 10 agencies — once filled, this offer closes.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-logo">
+      <img src="Brand_assets/Zen - 3.png" alt="Zen Growth Systems">
+      <span>Zen Growth Systems</span>
+    </div>
+    <p>&copy; 2026 Zen Growth Systems. All rights reserved.</p>
+    <p>AI appointment setting infrastructure for insurance agencies.</p>
+  </div>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('vis'); observer.unobserve(e.target); }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.fu').forEach(el => observer.observe(el));
+
+  window.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('#hero .fu, #audit .fu').forEach((el, i) => {
+      setTimeout(() => el.classList.add('vis'), 80 + i * 100);
+    });
+    document.querySelectorAll('.fu').forEach(el => {
+      if (el.getBoundingClientRect().top < window.innerHeight) el.classList.add('vis');
+    });
+  });
+
+  function toggleFaq(btn) {
+    const item = btn.closest('.faq-item');
+    const body = item.querySelector('.faq-body');
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i => {
+      i.classList.remove('open');
+      i.querySelector('.faq-body').style.maxHeight = '0';
+    });
+    if (!isOpen) {
+      item.classList.add('open');
+      body.style.maxHeight = body.scrollHeight + 'px';
+    }
+  }
+
+  function handleForm(e, formId) {
+    e.preventDefault();
+    const form = document.getElementById(formId);
+    const successId = formId === 'hero-form' ? 'hero-success' : 'final-success';
+    form.style.display = 'none';
+    document.getElementById(successId).style.display = 'block';
+  }
+
+  // ── WebGL Hero Shader ───────────────────────────────────────────────────────
+  (function () {
+    const canvas = document.getElementById('hero-shader');
+    const hero   = document.getElementById('hero');
+    if (!canvas || !hero || typeof THREE === 'undefined') return;
+
+    const vertexShader = `
+      attribute vec3 position;
+      void main() {
+        gl_Position = vec4(position, 1.0);
+      }
+    `;
+
+    const fragmentShader = `
+      precision highp float;
+      uniform vec2  resolution;
+      uniform float time;
+      uniform float xScale;
+      uniform float yScale;
+      uniform float distortion;
+
+      void main() {
+        vec2 p = (gl_FragCoord.xy * 2.0 - resolution) / min(resolution.x, resolution.y);
+
+        float d  = length(p) * distortion;
+
+        float rx = p.x * (1.0 + d);
+        float gx = p.x;
+        float bx = p.x * (1.0 - d);
+
+        float r = 0.05 / abs(p.y + sin((rx + time) * xScale) * yScale);
+        float g = 0.05 / abs(p.y + sin((gx + time) * xScale) * yScale);
+        float b = 0.05 / abs(p.y + sin((bx + time) * xScale) * yScale);
+
+        gl_FragColor = vec4(r, g, b, 1.0);
+      }
+    `;
+
+    const scene    = new THREE.Scene();
+    const camera   = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, -1);
+    const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: false });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setClearColor(new THREE.Color(0x050507));
+
+    const uniforms = {
+      resolution: { value: [0, 0] },
+      time:       { value: 0.0 },
+      xScale:     { value: 1.0 },
+      yScale:     { value: 0.5 },
+      distortion: { value: 0.05 },
+    };
+
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array([
+      -1, -1, 0,
+       1, -1, 0,
+      -1,  1, 0,
+       1, -1, 0,
+      -1,  1, 0,
+       1,  1, 0,
+    ]), 3));
+
+    const material = new THREE.RawShaderMaterial({
+      vertexShader,
+      fragmentShader,
+      uniforms,
+      side: THREE.DoubleSide,
+    });
+
+    scene.add(new THREE.Mesh(geometry, material));
+
+    function resize() {
+      const w = hero.offsetWidth;
+      const h = hero.offsetHeight;
+      renderer.setSize(w, h, false);
+      uniforms.resolution.value = [w, h];
+    }
+
+    resize();
+    window.addEventListener('resize', resize);
+
+    (function animate() {
+      uniforms.time.value += 0.01;
+      renderer.render(scene, camera);
+      requestAnimationFrame(animate);
+    })();
+  })();
+</script>
+
+</body>
+</html>
