@@ -180,6 +180,12 @@
     }
     .optin-card h3 { font-size: 22px; margin-bottom: 8px; }
     .optin-card .card-sub { font-size: 15px; color: rgba(255,255,255,0.5); margin-bottom: 20px; }
+    .ghl-frame {
+      filter: invert(0.91) hue-rotate(180deg) contrast(0.95) brightness(1.05);
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 0 -4px;
+    }
 
     .card-features { display: flex; flex-direction: column; gap: 9px; margin-bottom: 26px; }
     .cf {
@@ -856,7 +862,7 @@
               Full infrastructure walkthrough — built around your agency
             </div>
           </div>
-          <div style="margin:-8px -4px 0;">
+          <div class="ghl-frame">
             <iframe
               src="https://api.leadconnectorhq.com/widget/form/yxHH9BK9a3dX3a17ioJT"
               style="width:100%;height:725px;border:none;border-radius:8px;display:block;"
@@ -1434,6 +1440,16 @@
         </div>
       </div>
 
+      <div class="faq-item fu d1">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Does this work if my business is mostly referral-based?
+          <span class="faq-icon" aria-hidden="true"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+        </button>
+        <div class="faq-body">
+          <div class="faq-body-inner">Yes — and referral-based agents often get more out of this than they expect. Referrals still need to be followed up with quickly, confirmed, reminded, and re-engaged if they go cold or no-show. The system handles all of that automatically, which means your referrals actually show up and convert at a higher rate instead of slipping through because life got in the way. Beyond that, the post-sale lifecycle layer — which includes referral sequences — actively generates more referrals from your existing client base by staying in touch at the right moments. If your business runs on relationships, this infrastructure protects and compounds those relationships rather than replacing them.</div>
+        </div>
+      </div>
+
       <div class="faq-item fu d3">
         <button class="faq-q" onclick="toggleFaq(this)">
           This sounds too good to be true — what's the catch?
@@ -1462,6 +1478,7 @@
           <div class="cohort-icon">🔒</div>
           <p><strong>Founding rate locked in at signup.</strong> Setup price increases once the 10 founding case studies are documented. 10 spots total — no exceptions.</p>
         </div>
+        <div class="ghl-frame">
         <iframe
           src="https://api.leadconnectorhq.com/widget/form/yxHH9BK9a3dX3a17ioJT"
           style="width:100%;height:725px;border:none;border-radius:8px;display:block;"
@@ -1479,6 +1496,7 @@
           data-form-id="yxHH9BK9a3dX3a17ioJT"
           title="Book Your Free Demo">
         </iframe>
+        </div>
         <p class="disclaimer" style="margin-top:14px;">We never share your information. Founding cohort is capped at 10 agencies — once filled, this offer closes.</p>
       </div>
     </div>
